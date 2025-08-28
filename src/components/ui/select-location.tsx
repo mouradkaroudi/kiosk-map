@@ -231,7 +231,28 @@ export function SelectLocation({ value, onChange }: Props) {
           <CommandList>
             <CommandEmpty>No location found.</CommandEmpty>
             <CommandGroup>
-              {mappedArray.map((option) => (
+              {mappedArray.sort((a, b) => {
+                // Extract the building number/identifier from the beginning
+                const getSortKey = (stateName: string) => {
+                  // Match the pattern at the start (number or letter followed by dash or space)
+                  const match = stateName.match(/^([A-Z]?\d+|[A-Z])\s*[-]\s*/);
+                  if (match) {
+                    const prefix = match[1];
+                    // If it's a number, pad it for proper numeric sorting
+                    if (/^\d+$/.test(prefix)) {
+                      return prefix.padStart(4, '0'); // Pad numbers to 4 digits
+                    }
+                    return prefix; // Return letters as-is
+                  }
+                  // If no pattern match, sort by the full name
+                  return stateName;
+                };
+                
+                const keyA = getSortKey(a.stateName);
+                const keyB = getSortKey(b.stateName);
+                
+                return keyA.localeCompare(keyB);
+              }).map((option) => (
                 <CommandItem
                   key={option.id}
                   value={option.stateName}
