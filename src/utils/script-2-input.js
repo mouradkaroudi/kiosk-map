@@ -138,19 +138,14 @@ Array.from(svg.querySelectorAll('path.map_road')).forEach(path => {
   }
 });
 
-// Log debugging information
-//console.log('roadsByPlot:', roadsByPlot);
-//console.log('route:', route);
-//console.log('edgeToLineMap:', edgeToLineMap);
-//console.log('Vertices:', vertices.map(v => `${v.id}: (${v.cx}, ${v.cy})`));
-//console.log('Edges:', edges.map(e => `${e.id}: ${e.from} -> ${e.to} (${e.coordFrom || 'N/A'} -> ${e.coordTo || 'N/A'}, weight: ${e.weight.toFixed(2)})`));
-
 // Build graph from SVG edges and route array
 const graph = {};
 const allNodes = [...new Set([...vertices.map(v => v.id), ...route.flat()])];
 allNodes.forEach(node => {
   graph[node] = [];
 });
+
+console.log('graph',graph)
 
 edges.forEach(edge => {
   if (graph[edge.from] && graph[edge.to]) {
@@ -230,46 +225,6 @@ function dijkstra(graph, start, end) {
 function formatPointName(id) {
   return id.startsWith('road_') ? `Junction ${id}` : `Plot ${id}`;
 }
-
-// Populate dropdowns
-// function populateDropdowns() {
-//   const startSelect = document.getElementById('start');
-//   const endSelect = document.getElementById('end');
-
-//   startSelect.innerHTML = '<option value="">Select start plot</option>';
-//   endSelect.innerHTML = '<option value="">Select end plot</option>';
-
-//   const plotNodes = vertices.map(v => v.id).sort((a, b) => {
-//     const aVal = a.replace("plot_", "");
-//     const bVal = b.replace("plot_", "");
-
-//     const aIsNum = /^\d+$/.test(aVal);
-//     const bIsNum = /^\d+$/.test(bVal);
-
-//     if (aIsNum && bIsNum) {
-//       return Number(aVal) - Number(bVal);
-//     } else if (aIsNum) {
-//       return -1;
-//     } else if (bIsNum) {
-//       return 1;
-//     } else {
-//       return aVal.localeCompare(bVal);
-//     }
-//   });
-
-//   plotNodes.forEach(node => {
-//     const optionStart = document.createElement('option');
-//     optionStart.value = node;
-//     optionStart.textContent = formatPointName(node);
-//     startSelect.appendChild(optionStart);
-
-//     const optionEnd = document.createElement('option');
-//     optionEnd.value = node;
-//     optionEnd.textContent = formatPointName(node);
-//     endSelect.appendChild(optionEnd);
-//   });
-// }
-
 
 function populateDropdowns() {
 
@@ -461,54 +416,10 @@ function populateDropdowns() {
   const startSelect = document.getElementById('start');
   const endSelect = document.getElementById('end');
 
-  console.log('startSelect',startSelect)
+  console.log('startSelect', startSelect)
 
   startSelect.innerHTML = '<option value="">Select start plot</option>';
   endSelect.innerHTML = '<option value="">Select end plot</option>';
-
-  // const plotNodes = vertices.map(v => v.id).sort((a, b) => {
-  //   const aVal = a.replace("plot_", "");
-  //   const bVal = b.replace("plot_", "");
-
-  //   const aIsNum = /^\d+$/.test(aVal);
-  //   const bIsNum = /^\d+$/.test(bVal);
-
-  //   if (aIsNum && bIsNum) {
-  //     return Number(aVal) - Number(bVal);
-  //   } else if (aIsNum) {
-  //     return -1;
-  //   } else if (bIsNum) {
-  //     return 1;
-  //   } else {
-  //     return aVal.localeCompare(bVal);
-  //   }
-  // });
-
-
-  //     plotNodes.forEach(node => {
-  //   const optionStart = document.createElement('option');
-  //    optionStart.value = node;
-
-  //      const optionEnd = document.createElement('option');
-  //   optionEnd.value = node;
-  //    mappedArray.forEach(node_id => {
-  //      if(node_id.id==node){
-
-  //       optionStart.textContent = node_id.stateName;
-  //       startSelect.appendChild(optionStart);
-
-  //         optionEnd.textContent = node_id.stateName;
-  //   endSelect.appendChild(optionEnd);
-
-  //     }else{
-
-  //     }
-  //   });
-
-
-
-
-  // });
 
   // Filter mappedArray to include only IDs present in vertices
   const plotNodes = mappedArray
@@ -536,9 +447,6 @@ function populateDropdowns() {
       }
     });
 
-  console.log(plotNodes)
-
-
   const n = [];
   plotNodes.forEach(node => {
     n.push(node.id);
@@ -552,10 +460,6 @@ function populateDropdowns() {
     optionEnd.textContent = node.stateName;
     endSelect.appendChild(optionEnd);
   });
-
-  console.log('Filtered nodes:', n);
-
-
 }
 
 // Find and highlight route
@@ -563,8 +467,6 @@ function findAndHighlightRoute(start, end) {
   // Normalize input: remove 'ploa_' prefix if present
   start = start.replace(/^ploa_/, '');
   end = end.replace(/^ploa_/, '');
-
-
 
   if (!start || !end) {
     alert('Please provide both start and end plots.');
@@ -585,7 +487,6 @@ function findAndHighlightRoute(start, end) {
   });
 
   const { path, distance } = dijkstra(graph, start, end);
-  //console.log(`Path from ${start} to ${end}: ${path.join(' -> ')}, distance: ${distance}`);
 
   if (distance === Infinity || path.length <= 1) {
     alert('No valid route found between these plots.');
@@ -679,39 +580,10 @@ function findAndHighlightRoute(start, end) {
 
 // Initialize
 populateDropdowns();
-console.log('run')
 document.getElementById('findRoute').addEventListener('click', () => {
-  // const startInput = document.getElementById('startInput').value.trim();
-  // const endInput = document.getElementById('endInput').value.trim();
   const startSelect = document.getElementById('start').value;
   const endSelect = document.getElementById('end').value;
-
-  // Use manual inputs if provided, otherwise fall back to dropdowns
-  // const start = startInput || startSelect;
-  // const end = endInput || endSelect;
   const start = startSelect;
   const end = endSelect;
-
-  // this line for set value in input form
-  // const start = startInput ;
-  // const end = endInput;
-
-
-
   findAndHighlightRoute(start, end);
 });
-
-
-
-// this code for on change the dropdown input then set value in input box
-
-//        const startSelect_id = document.getElementById('start');
-
-//        startSelect_id.addEventListener('change',(ev) =>{
-//           document.getElementById('startInput').value = ev.target.value;
-//        });
-//  const endSelect_id = document.getElementById('end')
-
-//        endSelect_id.addEventListener('change',(ev) =>{
-//   document.getElementById('endInput').value = ev.target.value;
-//        });

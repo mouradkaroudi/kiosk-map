@@ -1,5 +1,5 @@
 // Map edges to lines
-const edgeToLineMap = {
+export const edgeToLineMap = {
   "1-2": "road_2",
   "2-1": "road_2",
   "2-road_2_a": "road_2_a",

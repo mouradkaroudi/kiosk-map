@@ -1,6 +1,6 @@
 // Define route array with explicit connections using road_ IDs
 // Define route array with explicit connections
-const route = [
+export const route = [
   ["1", "2"],
   ["2", "road_2_a"],
   ["road_2_a", "road_2_b"],
